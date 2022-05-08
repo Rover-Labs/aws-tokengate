@@ -12,13 +12,16 @@ const db = mysql.createConnection({
   database: "sys",
 });
 
-db.connect((err) => {
-  if (err) {
-    console.log(err.message);
-    return;
-  }
-  console.log("Database connected.");
-})
+db.connect(function(err) {
+  if (err) throw err;
+  // if connection is successful
+  db.query("SELECT * FROM whitelist", function (err, result, fields) {
+    // if any error while executing above query, throw error
+    if (err) throw err;
+    // if there is no error, you have the result
+    console.log(result);
+  });
+});
 
 // exports.handler = async (event) => {
 
