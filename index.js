@@ -25,7 +25,7 @@ db.connect(function(err) {
   });
 });
 // if else statement with a log of you are not subscribed
-///
+////
 
 
 // exports.handler = async (event) => {
