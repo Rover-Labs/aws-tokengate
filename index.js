@@ -12,12 +12,12 @@ const db = mysql.createConnection({
   database: "sys",
 });
 
-const address = "";
+const address = "0xc92ceddfb8dd984a89fb494c376f9a48b999aafc";
 
 db.connect(function(err) {
   if (err) throw err;
   // if connection is successful
-  db.query(`SELECT * FROM whitelist WHERE address=${address}`, function (err, result, fields) {
+  db.query("SELECT * FROM whitelist WHERE address = " + db.escape(address) + "", function (err, result, fields) {
     // if any error while executing above query, throw error
     if (err) throw err;
     // if there is no error, you have the result
