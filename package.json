@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "moralis": "^1.5.11"
+    "analytics-node": "^6.0.0",
+    "moralis": "^1.5.11",
+    "mysql": "^2.18.1"
   }
 }
