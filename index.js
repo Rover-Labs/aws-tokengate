@@ -7,7 +7,7 @@ const analytics = new Analytics("DAsmuBOK66rejbtN9vCfHW3zFs7rA3yj");
 const pool = mysql.createPool({
   host: process.env.db_host,
   user: process.env.db_user,
-  port: '3306',
+  port: process.env.db_port,
   password: process.env.db_secret,
   database: process.env.db_name,
   waitForConnections: true,
@@ -18,10 +18,9 @@ const pool = mysql.createPool({
 exports.handler = async (event) => {
 
   // Moralis API Initialization
-  const serverUrl = "https://ckb11ejzq8dp.grandmoralis.com:2053/server";
-  const appId = "lDDXYagREnknCf9WxDm994rB9YcHiEfk767ehbna";
-  const moralisSecret =
-    "1gSzI1YNfLvgwZjTD2l9y6nq6elWKwtUinHBKGuhTLDU1NoKbASJu1dFpOeSjnJp";
+  const serverUrl = process.env.moralis_server;
+  const appId = process.env.moralis_appid;
+  const moralisSecret = process.env.moralis_secret;
   await Moralis.start({ serverUrl, appId, moralisSecret });
 
   // User Address Parameter
