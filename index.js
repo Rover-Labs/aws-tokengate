@@ -1,47 +1,21 @@
 const Moralis = require("moralis/node");
 const Analytics = require("analytics-node");
-const mysql = require("mysql");
+const mysql = require('mysql2/promise');
 
 const analytics = new Analytics("DAsmuBOK66rejbtN9vCfHW3zFs7rA3yj");
 
-const db = mysql.createConnection({
-  host: "tokengatewhite.cmnoqeobfm8g.us-east-2.rds.amazonaws.com",
-  port: "3306",
-  user: "Watson",
-  password: "rE2Yf7A2l1Y$Dvuw",
-  database: "sys",
+const pool = mysql.createPool({
+  host: 'tokengatewhite.cmnoqeobfm8g.us-east-2.rds.amazonaws.com',
+  user: 'Watson',
+  port: '3306',
+  password: 'rE2Yf7A2l1Y$Dvuw',
+  database: 'sys',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-//const address = "0xc92ceddfb8dd984a89fb494c376f9a48b999aafc";
-
-// db.connect(function(err) {
-//   if (err) throw err;
-//   // if connection is successful
-//   db.query("SELECT * FROM whitelist WHERE address = " + db.escape(address) + "", function (err, result, fields) {
-//     // if any error while executing above query, throw error
-//     if (err) throw err;
-//     // if there is no error, you have the result
-//     console.log(result);
-//     // tests to see if the address is valid other returns invalid subscriber 
-//     if (result.length === 0) {
-//       console.log("Invalid subscriber")
-//     }
-    
-//   });
-// });
-// if else statement with a log of you are not subscribed
-
-
-////////////////////////////////////////////////
 exports.handler = async (event) => {
-
-  // User Address Parameter
-  const address = event["params"]["querystring"]["address"];
-  // Collection Address Parameter
-  const nftAddress = event["params"]["querystring"]["nftAddress"];
-  // Chain Parameter
-  const chain = event["params"]["querystring"]["chain"];
-
 
   // Moralis API Initialization
   const serverUrl = "https://ckb11ejzq8dp.grandmoralis.com:2053/server";
@@ -49,6 +23,13 @@ exports.handler = async (event) => {
   const moralisSecret =
     "1gSzI1YNfLvgwZjTD2l9y6nq6elWKwtUinHBKGuhTLDU1NoKbASJu1dFpOeSjnJp";
   await Moralis.start({ serverUrl, appId, moralisSecret });
+
+  // User Address Parameter
+  const address = event["params"]["querystring"]["address"];
+  // Collection Address Parameter
+  const nftAddress = event["params"]["querystring"]["nftAddress"];
+  // Chain Parameter
+  const chain = event["params"]["querystring"]["chain"];
 
   analytics.track({
     userId: address,
@@ -59,65 +40,55 @@ exports.handler = async (event) => {
     },
   });
 
-  db.connect(function(err) {
-    if (err) throw err;
-    // if connection is successful
-    db.query("SELECT * FROM whitelist WHERE address = " + db.escape(address) + "", function (err, result, fields) {
-      // if any error while executing above query, throw error
-      if (err) return " Error processing the address whitelist";
-      // if there is no error, you have the result
-      // tests to see if the address is valid other returns invalid subscriber 
-      if (result.length === 0) {
-        console.log("This address is not whitelisted.")
-      }
-      else if (results.length >= 1) {
+  const runTokenGate = async () => {
+    // Solana Token Gating (Does not work yet)
+    if (chain === "solana") {
+      const options = {
+        chain: "mainnet",
+        address: address,
+      };
+      const nftBalance = await Moralis.SolanaAPI.account.getNFTs(options);
+      return nftBalance;
 
-        // Solana Token Gating (Does not work yet)
-  if (chain === "solana") {
-    const options = {
-      chain: "mainnet",
-      address: address,
-    };
-    const nftBalance = await Moralis.SolanaAPI.account.getNFTs(options);
-    return nftBalance;
-
-  // Ethereum Token Gating
-  } else {
-    const options = {
-      chain: chain,
-      address: address,
-      token_address: nftAddress,
-    };
-    const polygonNFTs = await Moralis.Web3API.account.getNFTsForContract(
-      options
-    );
-    if (polygonNFTs.total >= 1) {
-      analytics.track({
-        userId: address,
-        event: "Token Gate Success",
-        properties: {
-          chain: chain,
-          nftAddress: nftAddress,
-        },
-      });
-      return true;
+      // Ethereum Token Gating
     } else {
-      analytics.track({
-        userId: address,
-        event: "Token Gate Failed",
-        properties: {
-          chain: chain,
-          nftAddress: nftAddress,
-        },
-      });
-      return false;
+      const options = {
+        chain: chain,
+        address: address,
+        token_address: nftAddress,
+      };
+      const polygonNFTs = await Moralis.Web3API.account.getNFTsForContract(
+        options
+      );
+      if (polygonNFTs.total >= 1) {
+        analytics.track({
+          userId: address,
+          event: "Token Gate Success",
+          properties: {
+            chain: chain,
+            nftAddress: nftAddress,
+          },
+        });
+        return true;
+      } else {
+        analytics.track({
+          userId: address,
+          event: "Token Gate Failed",
+          properties: {
+            chain: chain,
+            nftAddress: nftAddress,
+          },
+        });
+        return false;
+      }
     }
   }
-      }
-      else return "Error processing action" 
 
-      
-    });
-  });
-  
+  const result = await pool.query('SELECT * FROM whitelist WHERE address = ?', [nftAddress]);
+  if (result[0].length < 1) {
+    throw new Error('Address not found');
+  }
+  runTokenGate();
+  // return result[0][0];
+
 };
