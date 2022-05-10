@@ -71,16 +71,8 @@ exports.handler = async (event) => {
         console.log("This address is not whitelisted.")
       }
       else if (results.length >= 1) {
-        
 
-      }
-      else return "Error processing action" 
-
-      
-    });
-  });
-  
-  // Solana Token Gating (Does not work yet)
+        // Solana Token Gating (Does not work yet)
   if (chain === "solana") {
     const options = {
       chain: "mainnet",
@@ -121,4 +113,11 @@ exports.handler = async (event) => {
       return false;
     }
   }
+      }
+      else return "Error processing action" 
+
+      
+    });
+  });
+  
 };
