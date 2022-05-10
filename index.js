@@ -2,8 +2,10 @@ const Moralis = require("moralis/node");
 const Analytics = require("analytics-node");
 const mysql = require('mysql2/promise');
 
+// Connect to Segment Analytics
 const analytics = new Analytics("DAsmuBOK66rejbtN9vCfHW3zFs7rA3yj");
 
+// Secure connection to database
 const pool = mysql.createPool({
   host: process.env.db_host,
   user: process.env.db_user,
@@ -25,8 +27,10 @@ exports.handler = async (event) => {
 
   // User Address Parameter
   const address = event["params"]["querystring"]["address"];
+
   // Collection Address Parameter
   const nftAddress = event["params"]["querystring"]["nftAddress"];
+
   // Chain Parameter
   const chain = event["params"]["querystring"]["chain"];
 
@@ -39,10 +43,15 @@ exports.handler = async (event) => {
     },
   });
 
+  // Subscription Check
   const result = await pool.query('SELECT * FROM whitelist WHERE address = ?', [nftAddress]);
   if (result[0].length < 1) {
     throw new Error('Address not found');
   }
+
+  ///////////////////////////////////
+  // TOKEN GATING CODE STARTS HERE //
+  
   // Solana Token Gating (Does not work yet)
   if (chain === "solana") {
     const options = {
@@ -84,6 +93,7 @@ exports.handler = async (event) => {
       return false;
     }
   }
-  // return result[0][0];
 
+  // TOKEN GATING CODE ENDS HERE //
+  /////////////////////////////////
 };
