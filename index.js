@@ -5,11 +5,11 @@ const mysql = require('mysql2/promise');
 const analytics = new Analytics("DAsmuBOK66rejbtN9vCfHW3zFs7rA3yj");
 
 const pool = mysql.createPool({
-  host: 'tokengatewhite.cmnoqeobfm8g.us-east-2.rds.amazonaws.com',
-  user: 'Watson',
+  host: process.env.db_host,
+  user: process.env.db_user,
   port: '3306',
-  password: 'rE2Yf7A2l1Y$Dvuw',
-  database: 'sys',
+  password: process.env.db_secret,
+  database: process.env.db_name,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
