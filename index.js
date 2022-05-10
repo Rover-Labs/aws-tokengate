@@ -63,11 +63,13 @@ exports.handler = async (event) => {
   if (result[0].length < 1) {
     sendAnalytics("Token Gate Failed: Bad Whitelist");
     return {
-      status: "Error: Token Address not Whitelisted!",
+      status: "Error",
       data: {
         "userAddress": address,
         "nftAddress": nftAddress,
-        "nftChain": chain
+        "nftChain": chain,
+        "tokenGate": false,
+        "message": "Token Address not Whitelisted!"
       }
     };
   }
@@ -102,18 +104,20 @@ exports.handler = async (event) => {
           "userAddress": address,
           "nftAddress": nftAddress,
           "nftChain": chain,
-          "isOwner": true
+          "tokenGate": true,
+          "message": "Token Gate Successful!"
         }
       };
     } else {
       sendAnalytics("Token Gate Failed: Not Owner");
       return {
-        status: "Error: User does not own token!",
+        status: "Error",
         data: {
           "userAddress": address,
           "nftAddress": nftAddress,
           "nftChain": chain,
-          "isOwner": false
+          "tokenGate": false,
+          "message": "User does not own token!"
         }
       };
     }
