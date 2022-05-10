@@ -40,55 +40,51 @@ exports.handler = async (event) => {
     },
   });
 
-  const runTokenGate = async () => {
-    // Solana Token Gating (Does not work yet)
-    if (chain === "solana") {
-      const options = {
-        chain: "mainnet",
-        address: address,
-      };
-      const nftBalance = await Moralis.SolanaAPI.account.getNFTs(options);
-      return nftBalance;
-
-      // Ethereum Token Gating
-    } else {
-      const options = {
-        chain: chain,
-        address: address,
-        token_address: nftAddress,
-      };
-      const polygonNFTs = await Moralis.Web3API.account.getNFTsForContract(
-        options
-      );
-      if (polygonNFTs.total >= 1) {
-        analytics.track({
-          userId: address,
-          event: "Token Gate Success",
-          properties: {
-            chain: chain,
-            nftAddress: nftAddress,
-          },
-        });
-        return true;
-      } else {
-        analytics.track({
-          userId: address,
-          event: "Token Gate Failed",
-          properties: {
-            chain: chain,
-            nftAddress: nftAddress,
-          },
-        });
-        return false;
-      }
-    }
-  }
-
   const result = await pool.query('SELECT * FROM whitelist WHERE address = ?', [nftAddress]);
   if (result[0].length < 1) {
     throw new Error('Address not found');
   }
-  runTokenGate();
+  // Solana Token Gating (Does not work yet)
+  if (chain === "solana") {
+    const options = {
+      chain: "mainnet",
+      address: address,
+    };
+    const nftBalance = await Moralis.SolanaAPI.account.getNFTs(options);
+    return nftBalance;
+
+    // Ethereum Token Gating
+  } else {
+    const options = {
+      chain: chain,
+      address: address,
+      token_address: nftAddress,
+    };
+    const polygonNFTs = await Moralis.Web3API.account.getNFTsForContract(
+      options
+    );
+    if (polygonNFTs.total >= 1) {
+      analytics.track({
+        userId: address,
+        event: "Token Gate Success",
+        properties: {
+          chain: chain,
+          nftAddress: nftAddress,
+        },
+      });
+      return true;
+    } else {
+      analytics.track({
+        userId: address,
+        event: "Token Gate Failed",
+        properties: {
+          chain: chain,
+          nftAddress: nftAddress,
+        },
+      });
+      return false;
+    }
+  }
   // return result[0][0];
 
 };
