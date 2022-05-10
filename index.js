@@ -22,12 +22,17 @@ db.connect(function(err) {
     if (err) throw err;
     // if there is no error, you have the result
     console.log(result);
+    // tests to see if the address is valid other returns invalid subscriber 
+    if (result.length === 0) {
+      console.log("Invalid subscriber")
+    }
+    
   });
 });
 // if else statement with a log of you are not subscribed
-////
 
 
+//////////////////////////////////////////////////
 // exports.handler = async (event) => {
 
 //   // User Address Parameter
