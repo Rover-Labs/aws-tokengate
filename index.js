@@ -51,7 +51,7 @@ exports.handler = async (event) => {
 
   ///////////////////////////////////
   // TOKEN GATING CODE STARTS HERE //
-  
+
   // Solana Token Gating (Does not work yet)
   if (chain === "solana") {
     const options = {
@@ -80,7 +80,13 @@ exports.handler = async (event) => {
           nftAddress: nftAddress,
         },
       });
-      return true;
+      return {
+        status: "success",
+        data: {
+          "userAddress": address,
+          "nftAddress": nftAddress
+        }
+      };
     } else {
       analytics.track({
         userId: address,
@@ -90,7 +96,7 @@ exports.handler = async (event) => {
           nftAddress: nftAddress,
         },
       });
-      return false;
+      throw new Error('Address does not own token!')
     }
   }
 
