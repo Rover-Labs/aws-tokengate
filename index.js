@@ -34,6 +34,8 @@ exports.handler = async (event) => {
   // Chain Parameter
   const chain = event["params"]["querystring"]["chain"];
 
+
+  // Initialization Analytics
   analytics.track({
     userId: address,
     event: "Token Gate Used",
@@ -43,10 +45,31 @@ exports.handler = async (event) => {
     },
   });
 
+   // Status Analytics
+  const sendAnalytics = (status) => {
+    analytics.track({
+      userId: address,
+      event: status,
+      properties: {
+        userAddress: address,
+        nftAddress: nftAddress,
+        nftChain: chain,
+      },
+    });
+  }
+
   // Subscription Check
   const result = await pool.query('SELECT * FROM whitelist WHERE address = ?', [nftAddress]);
   if (result[0].length < 1) {
-    throw new Error('Address not found');
+    sendAnalytics("Token Gate Failed: Bad Whitelist");
+    return {
+      status: "Error: Token Address not Whitelisted!",
+      data: {
+        "userAddress": address,
+        "nftAddress": nftAddress,
+        "nftChain": chain
+      }
+    };
   }
 
   ///////////////////////////////////
@@ -72,31 +95,27 @@ exports.handler = async (event) => {
       options
     );
     if (polygonNFTs.total >= 1) {
-      analytics.track({
-        userId: address,
-        event: "Token Gate Success",
-        properties: {
-          chain: chain,
-          nftAddress: nftAddress,
-        },
-      });
+      sendAnalytics("Token Gate Success");
       return {
-        status: "success",
+        status: "Success",
         data: {
           "userAddress": address,
-          "nftAddress": nftAddress
+          "nftAddress": nftAddress,
+          "nftChain": chain,
+          "isOwner": true
         }
       };
     } else {
-      analytics.track({
-        userId: address,
-        event: "Token Gate Failed",
-        properties: {
-          chain: chain,
-          nftAddress: nftAddress,
-        },
-      });
-      throw new Error('Address does not own token!')
+      sendAnalytics("Token Gate Failed: Not Owner");
+      return {
+        status: "Error: User does not own token!",
+        data: {
+          "userAddress": address,
+          "nftAddress": nftAddress,
+          "nftChain": chain,
+          "isOwner": false
+        }
+      };
     }
   }
 
