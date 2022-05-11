@@ -169,7 +169,6 @@ exports.handler = async (event) => {
       };
     }
   }
-
   // TOKEN GATING CODE ENDS HERE //
   /////////////////////////////////
 };
