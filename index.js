@@ -105,28 +105,10 @@ exports.handler = async (event) => {
       );
       if (res.data.assets.length < 1) {
         sendAnalytics("Token Gate Failed: Not Owner");
-        return {
-          status: "Error",
-          data: {
-            "userAddress": address,
-            "nftAddress": nftAddress,
-            "nftChain": chain,
-            "tokenGate": false,
-            "message": "User does not own token!"
-          }
-        };
+        return false;
       } else {
         sendAnalytics("Token Gate Success");
-        return {
-          status: "Success",
-          data: {
-            "userAddress": address,
-            "nftAddress": nftAddress,
-            "nftChain": chain,
-            "tokenGate": true,
-            "message": "Token Gate Successful!"
-          }
-        };
+        return true;
       }
     } catch (e) {
       return (e);
@@ -145,28 +127,10 @@ exports.handler = async (event) => {
     );
     if (polygonNFTs.total >= 1) {
       sendAnalytics("Token Gate Success");
-      return {
-        status: "Success",
-        data: {
-          "userAddress": address,
-          "nftAddress": nftAddress,
-          "nftChain": chain,
-          "tokenGate": true,
-          "message": "Token Gate Successful!"
-        }
-      };
+      return true;
     } else {
       sendAnalytics("Token Gate Failed: Not Owner");
-      return {
-        status: "Error",
-        data: {
-          "userAddress": address,
-          "nftAddress": nftAddress,
-          "nftChain": chain,
-          "tokenGate": false,
-          "message": "User does not own token!"
-        }
-      };
+      return false;
     }
   }
 
