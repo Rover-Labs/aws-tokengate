@@ -93,7 +93,7 @@ exports.handler = async (event) => {
     // Only if chain = opensea
     var config = {
       method: 'get',
-      url: 'https://api.opensea.io/api/v1/assets?owner=0x2769B116e44fB9eA698ea3B026B91C5103C37E80&collection=cryptdogenft',
+      url: "https://api.opensea.io/api/v1/assets?owner=" + address + "&collection=" + nftAddress,
       headers: {
         'X-API-KEY': XAPIKEY,
         'Cookie': Cookie
@@ -102,7 +102,7 @@ exports.handler = async (event) => {
 
     axios(config)
       .then(function (response) {
-        return(JSON.stringify(response.data));
+        return(JSON.stringify(response));
       })
       .catch(function (error) {
         return(error);
