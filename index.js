@@ -1,6 +1,7 @@
 const Moralis = require("moralis/node");
 const Analytics = require("analytics-node");
 const mysql = require('mysql2/promise');
+const axios = require('axios');
 
 // Connect to Segment Analytics
 const analytics = new Analytics("DAsmuBOK66rejbtN9vCfHW3zFs7rA3yj");
@@ -45,7 +46,7 @@ exports.handler = async (event) => {
     },
   });
 
-   // Status Analytics
+  // Status Analytics
   const sendAnalytics = (status) => {
     analytics.track({
       userId: address,
@@ -86,7 +87,29 @@ exports.handler = async (event) => {
     const nftBalance = await Moralis.SolanaAPI.account.getNFTs(options);
     return nftBalance;
 
-    // Ethereum Token Gating
+    // OpenSea Token Gate
+  } else if (chain === "opensea") {
+    // nftAddress = Collection Slug
+    // Only if chain = opensea
+    var config = {
+      method: 'get',
+      url: 'https://api.opensea.io/api/v1/assets?owner=0x2769B116e44fB9eA698ea3B026B91C5103C37E80&collection=cryptdogenft',
+      headers: {
+        'X-API-KEY': '8bc7b3287763474fbe9d296f896e0856',
+        'Cookie': '__cf_bm=C3GdLIBwl3WGlgIL7oaH0OudDqPsGGSqT33PxkablKE-1652238806-0-AdCjgtiaizmnXbRiELmaeFrfY9uO2ZDShsBCKQSOQ2qDt44iC1K6eg8Cq+BB6g2oAM/iOeH2KKqIhMTvkvJPq8M='
+      }
+    };
+
+    axios(config)
+      .then(function (response) {
+        return(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        return(error);
+      });
+
+
+    // Ethereum Token Gate
   } else {
     const options = {
       chain: chain,
