@@ -95,8 +95,8 @@ exports.handler = async (event) => {
       method: 'get',
       url: "https://api.opensea.io/api/v1/assets?owner=" + address + "&collection=" + nftAddress,
       headers: {
-        'X-API-KEY': XAPIKEY,
-        'Cookie': Cookie
+        'X-API-KEY': process.env.XAPIKEY,
+        'Cookie': process.env.Cookie,
       }
     };
 
