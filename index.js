@@ -103,7 +103,11 @@ exports.handler = async (event) => {
           },
         }
       );
-      return(res.data);
+      if (res.data.assets.length < 1) {
+        return "you don't own bro"
+      } else {
+        return "yooo own"
+      }
     } catch (e) {
       return(e);
     }
