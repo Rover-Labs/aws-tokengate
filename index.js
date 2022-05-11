@@ -95,8 +95,8 @@ exports.handler = async (event) => {
       method: 'get',
       url: 'https://api.opensea.io/api/v1/assets?owner=0x2769B116e44fB9eA698ea3B026B91C5103C37E80&collection=cryptdogenft',
       headers: {
-        'X-API-KEY': '8bc7b3287763474fbe9d296f896e0856',
-        'Cookie': '__cf_bm=C3GdLIBwl3WGlgIL7oaH0OudDqPsGGSqT33PxkablKE-1652238806-0-AdCjgtiaizmnXbRiELmaeFrfY9uO2ZDShsBCKQSOQ2qDt44iC1K6eg8Cq+BB6g2oAM/iOeH2KKqIhMTvkvJPq8M='
+        'X-API-KEY': XAPIKEY,
+        'Cookie': Cookie
       }
     };
 
