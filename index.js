@@ -4,7 +4,7 @@ const mysql = require('mysql2/promise');
 const axios = require('axios');
 
 // Connect to Segment Analytics
-const analytics = new Analytics("DAsmuBOK66rejbtN9vCfHW3zFs7rA3yj");
+const analytics = new Analytics(process.env.analytics_key);
 
 // Secure connection to database
 const pool = mysql.createPool({
