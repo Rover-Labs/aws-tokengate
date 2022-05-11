@@ -96,7 +96,7 @@ exports.handler = async (event) => {
 
     try {
       let res = await axios.get(
-        `https://api.opensea.io/api/v1/asset_contract/${contractAddress}`,
+        `https://api.opensea.io/api/v1/assets?owner=${address}&collection={$nftAddress}`,
         {
           headers: {
             "X-API-KEY": process.env.XAPIKEY,
