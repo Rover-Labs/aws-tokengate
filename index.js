@@ -96,14 +96,14 @@ exports.handler = async (event) => {
 
     try {
       let res = await axios.get(
-        `https://api.opensea.io/api/v1/assets?owner=${address}&collection={$nftAddress}`,
+        `https://api.opensea.io/api/v1/assets?owner=0x2769B116e44fB9eA698ea3B026B91C5103C37E80&collection=cryptdogenft`,
         {
           headers: {
             "X-API-KEY": process.env.XAPIKEY,
           },
         }
       );
-      return(res.data);
+      return(res);
     } catch (e) {
       return(e);
     }
