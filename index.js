@@ -103,7 +103,7 @@ exports.handler = async (event) => {
           },
         }
       );
-      return(res);
+      return(JSON.stringify(res));
     } catch (e) {
       return(e);
     }
