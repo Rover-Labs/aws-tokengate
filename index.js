@@ -91,22 +91,22 @@ exports.handler = async (event) => {
   } else if (chain === "opensea") {
     // nftAddress = Collection Slug
     // Only if chain = opensea
-    var config = {
-      method: 'get',
-      url: "https://api.opensea.io/api/v1/assets?owner=" + address + "&collection=" + nftAddress,
-      headers: {
-        'X-API-KEY': process.env.XAPIKEY,
-        'Cookie': process.env.Cookie,
-      }
-    };
 
-    axios(config)
-      .then(function (response) {
-        return(JSON.stringify(response));
-      })
-      .catch(function (error) {
-        return(error);
-      });
+
+
+    try {
+      let res = await axios.get(
+        `https://api.opensea.io/api/v1/asset_contract/${contractAddress}`,
+        {
+          headers: {
+            "X-API-KEY": process.env.XAPIKEY,
+          },
+        }
+      );
+      return(res.data);
+    } catch (e) {
+      return(e);
+    }
 
 
     // Ethereum Token Gate
