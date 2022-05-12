@@ -3,6 +3,8 @@ const Analytics = require("analytics-node");
 const mysql = require('mysql2/promise');
 const axios = require('axios');
 
+// Old Code
+
 // Connect to Segment Analytics
 const analytics = new Analytics(process.env.analytics_key);
 
